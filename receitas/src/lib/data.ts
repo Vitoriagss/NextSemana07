@@ -11,6 +11,7 @@ export type Recipe = {
   category: string;
 };
 
+//Dados
 export const recipes: Recipe[] = [
   {
     id: "1",
