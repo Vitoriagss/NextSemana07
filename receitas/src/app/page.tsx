@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -16,6 +17,18 @@ export default function Home() {
         </div>
       </section>
 
+       {/* seção receitas em destaque */}
+      <section className="py-12">
+        <div className="flex flex-col items-center container mx-auto gap-8">
+          <h2 className="text-lg font-bold">Receitas em destaque</h2>
+
+            {/*Cards de receitas*/}
+          <Link className="flex text-orange-400 hover:text-orange-700 transition-colors" href="/receitas">
+            Ver todas as receitas
+            <ChevronRight />
+          </Link>
+        </div>
+      </section>
 
 
 
