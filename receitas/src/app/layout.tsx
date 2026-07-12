@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Header from "@/src/components/Header";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets:["latin"]
-})
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Receitas",
@@ -22,10 +23,10 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${inter.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
-      <header />
-      {children}
-      
+      <body className="min-h-full flex flex-col">
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
