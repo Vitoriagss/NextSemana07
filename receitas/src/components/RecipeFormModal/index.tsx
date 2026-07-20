@@ -2,17 +2,19 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { Dialog, DialogHeader, DialogTitle, DialogContent } from "../ui/dialog";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {RecipeFormData,recipeSchema,} from "@/src/lib/formValidationSchemas/recipeSchema";
+import { Recipe } from "@/src/lib/data";
 
 interface RecipeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSave: (recipe: Omit<Recipe, "id">) => void;
 }
 
 const DEFAULT_VALUES: RecipeFormData = {
   title: "",
   category: "",
   description: "",
-  imageURL: "",
+  image: "",
   prepTime: "",
   cookTime: "",
   servings: 1,
@@ -23,6 +25,7 @@ const DEFAULT_VALUES: RecipeFormData = {
 export default function RecipeFormModal({
   isOpen,
   onClose,
+  onSave
 }: RecipeFormModalProps) {
   const {
     register,
@@ -62,11 +65,12 @@ export default function RecipeFormModal({
     }
 
     console.log(recipeData);
+    onSave(recipeData);
     reset();
     onClose();
   };
 
-  const inputStyle = "p-2 border border-zinc-200 rounded-md flex-grow";
+  const inputStyle = "p-2 border border-zinc-200 rounded-md flex-grow w-full";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -130,17 +134,17 @@ export default function RecipeFormModal({
 
           {/* URL da imagem */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="imageUrl">URL da imagem</label>
+            <label htmlFor="image">URL da imagem</label>
             <input
               type="text"
               className={inputStyle}
-              id="imageUrl"
+              id="image"
               placeholder="/placeholder.svg"
-              {...register("imageURL")}
+              {...register("image")}
             />
-            {errors.imageURL && (
+            {errors.image && (
               <span className="text-sm text-red-500">
-                {errors.imageURL.message}
+                {errors.image.message}
               </span>
             )}
           </div>
@@ -205,13 +209,16 @@ export default function RecipeFormModal({
               {/* conteúdo */}
               {ingredientFields.map((field, index) => (
                 <div key={field.id} className="flex gap-2 w-full">
-                  <input
-                    id="ingredients"
-                    type="text"
-                    className={inputStyle}
-                    placeholder="Digite um ingrediente"
-                    {...register(`ingredients.${index}.value`)}
-                  />
+                  <div className="flex-grow">
+                    <input
+                      id="ingredients"
+                      type="text"
+                      className={inputStyle}
+                      placeholder="Digite um ingrediente"
+                      {...register(`ingredients.${index}.value`)}
+                    />
+                    {errors.ingredients?.[index]?.value && <span className="text-sm text-red-500">{errors.ingredients?.[index].value.message}</span>}
+                  </div>
                   {ingredientFields.length > 1 && (
                     <button
                       type="button"
@@ -241,13 +248,17 @@ export default function RecipeFormModal({
               {/* conteúdo */}
               {instructionFields.map((field, index) => (
                 <div key={field.id} className="flex gap-2 w-full">
-                  <textarea
-                    id="instructions"
-                    className={inputStyle}
-                    placeholder="Digite uma instrução"
-                    {...register(`instructions.${index}.value`)}
-                  />
-                  {ingredientFields.length > 1 && (
+                  <div className="flex-grow">
+                    <textarea
+                      id="instructions"
+                      className={inputStyle}
+                      placeholder="Digite uma instrução"
+                      {...register(`instructions.${index}.value`)}
+                    />
+                    {errors.instructions?.[index]?.value && <span className="text-sm text-red-500">{errors.instructions?.[index].value.message}</span>}
+                  </div>
+
+                  {instructionFields.length > 1 && (
                     <button
                       type="button"
                       className="bg-white border border-zinc-300 rounded-md hover:bg-gray-100 transition-colors px-4 py-2 font-medium h-fit"
