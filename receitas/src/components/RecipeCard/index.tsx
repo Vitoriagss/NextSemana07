@@ -6,12 +6,14 @@ import React from "react";
 
 interface RecipeCardProps {
   recipe: Recipe;
+  onEdit: () => void
 }
 
-export default function RecipeCard({ recipe }: RecipeCardProps) {
+export default function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
 
   const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    onEdit();
   }
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {

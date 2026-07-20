@@ -3,11 +3,14 @@ import { Dialog, DialogHeader, DialogTitle, DialogContent } from "../ui/dialog";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {RecipeFormData,recipeSchema,} from "@/src/lib/formValidationSchemas/recipeSchema";
 import { Recipe } from "@/src/lib/data";
+import { useEffect } from "react";
 
 interface RecipeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (recipe: Omit<Recipe, "id">) => void;
+  onSave: (recipe: Omit<Recipe, "id"> | Recipe) => void;
+  mode: "create" | "edit";
+  recipe?: Recipe;
 }
 
 const DEFAULT_VALUES: RecipeFormData = {
@@ -20,12 +23,14 @@ const DEFAULT_VALUES: RecipeFormData = {
   servings: 1,
   ingredients: [{ value: "" }],
   instructions: [{ value: "" }],
-}
+};
 
 export default function RecipeFormModal({
   isOpen,
   onClose,
-  onSave
+  onSave,
+  mode,
+  recipe,
 }: RecipeFormModalProps) {
   const {
     register,
@@ -36,7 +41,7 @@ export default function RecipeFormModal({
   } = useForm<RecipeFormData>({
     resolver: yupResolver(recipeSchema),
     mode: "onSubmit",
-    defaultValues: DEFAULT_VALUES
+    defaultValues: DEFAULT_VALUES,
   });
 
   const {
@@ -57,15 +62,31 @@ export default function RecipeFormModal({
     name: "instructions",
   });
 
+  useEffect(() => {
+    if (isOpen) {
+      if (mode === "edit" && recipe) {
+        reset({
+          ...recipe,
+          ingredients: recipe.ingredients.map((ing) => ({ value: ing })),
+          instructions: recipe.instructions.map((inst) => ({ value: inst })),
+        });
+      } else {
+        reset(DEFAULT_VALUES);
+      }
+    }
+  }, [mode, isOpen, recipe, reset]);
+
   const onSubmit = (data: RecipeFormData) => {
     const recipeData = {
       ...data,
       ingredients: data.ingredients.map((ingredient) => ingredient.value),
-      instructions: data.instructions.map((instruction) => instruction.value)
-    }
+      instructions: data.instructions.map((instruction) => instruction.value),
+    };
 
     console.log(recipeData);
-    onSave(recipeData);
+    onSave(
+      mode === "edit" && recipe ? { ...recipeData, id: recipe.id } : recipeData
+    );
     reset();
     onClose();
   };
@@ -76,7 +97,9 @@ export default function RecipeFormModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-white min-w-2xl max-h-[90dvh] overflow-y-scroll">
         <DialogHeader>
-          <DialogTitle>Nova receita</DialogTitle>
+          <DialogTitle>
+            {mode === "create" ? "Nova receita" : "Editar receita"}
+          </DialogTitle>
         </DialogHeader>
 
         <form
@@ -217,7 +240,11 @@ export default function RecipeFormModal({
                       placeholder="Digite um ingrediente"
                       {...register(`ingredients.${index}.value`)}
                     />
-                    {errors.ingredients?.[index]?.value && <span className="text-sm text-red-500">{errors.ingredients?.[index].value.message}</span>}
+                    {errors.ingredients?.[index]?.value && (
+                      <span className="text-sm text-red-500">
+                        {errors.ingredients?.[index].value.message}
+                      </span>
+                    )}
                   </div>
                   {ingredientFields.length > 1 && (
                     <button
@@ -255,7 +282,11 @@ export default function RecipeFormModal({
                       placeholder="Digite uma instrução"
                       {...register(`instructions.${index}.value`)}
                     />
-                    {errors.instructions?.[index]?.value && <span className="text-sm text-red-500">{errors.instructions?.[index].value.message}</span>}
+                    {errors.instructions?.[index]?.value && (
+                      <span className="text-sm text-red-500">
+                        {errors.instructions?.[index].value.message}
+                      </span>
+                    )}
                   </div>
 
                   {instructionFields.length > 1 && (
@@ -292,7 +323,7 @@ export default function RecipeFormModal({
               type="submit"
               className="bg-black rounded-md text-white hover:bg-gray-800 transition-colors px-4 py-2 font-medium"
             >
-              Criar receita
+              {mode === "create" ? "Criar receita" : "Salvar alterações"}
             </button>
           </div>
         </form>
