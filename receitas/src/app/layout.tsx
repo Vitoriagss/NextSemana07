@@ -5,7 +5,7 @@ import Header from "@/src/components/Header";
 import Footer from "../components/Footer";
 import { cn } from "@/src/lib/utils";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   variable: "--font-inter",

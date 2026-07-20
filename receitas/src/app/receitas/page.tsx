@@ -1,5 +1,6 @@
 "use client";
 
+import DeleteConfirmationModal from "@/src/components/DeleteConfirmationModal";
 import RecipeCard from "@/src/components/RecipeCard";
 import RecipeFormModal from "@/src/components/RecipeFormModal";
 import { recipes as initialRecipes } from "@/src/lib/data";
@@ -9,10 +10,12 @@ import { useState } from "react";
 
 export default function ReceitasPage() {
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [isDeleteConfirmationModalOpen, setIsDeleteConfirmationModalOpen] =
+    useState(false);
   const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(
-    undefined,
+    undefined
   );
 
   const handleOpenCreateModal = () => {
@@ -39,15 +42,31 @@ export default function ReceitasPage() {
       };
       setRecipes((prev) => [...prev, newRecipe]);
     } else {
-      // modo edição
+      // modo "edit"
       const updatedRecipe = recipeData as Recipe;
       setRecipes((prev) =>
         prev.map((recipe) =>
-          recipe.id === updatedRecipe.id ? updatedRecipe : recipe,
-        ),
+          recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+        )
       );
     }
     handleCloseModal();
+  };
+
+  const handleOpenDeleteConfirmationModal = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setIsDeleteConfirmationModalOpen(true);
+  };
+
+  const handleDeleteRecipe = () => {
+    if (selectedRecipe) {
+      setRecipes((prev) =>
+        prev.filter((recipe) => recipe.id !== selectedRecipe.id)
+      );
+
+      setIsDeleteConfirmationModalOpen(false);
+      setSelectedRecipe(undefined);
+    }
   };
 
   return (
@@ -71,6 +90,7 @@ export default function ReceitasPage() {
               key={recipe.id}
               recipe={recipe}
               onEdit={() => handleOpenEditModal(recipe)}
+              onDelete={() => handleOpenDeleteConfirmationModal(recipe)}
             />
           ))}
         </div>
@@ -81,6 +101,13 @@ export default function ReceitasPage() {
         onClose={handleCloseModal}
         onSave={handleSaveRecipe}
         mode={modalMode}
+        recipe={selectedRecipe}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteConfirmationModalOpen}
+        onClose={() => setIsDeleteConfirmationModalOpen(false)}
+        onConfirm={handleDeleteRecipe}
         recipe={selectedRecipe}
       />
     </main>
