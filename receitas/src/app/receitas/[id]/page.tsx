@@ -1,5 +1,3 @@
-// app/receitas/[id]/page.tsx
-
 import InfoPill from "@/src/components/InfoPill";
 import PreparationStep from "@/src/components/PreparationStep";
 import { recipes } from "@/src/lib/data";
@@ -8,16 +6,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-// 1. Ajustamos a tipagem para refletir que params é uma Promise
 interface RecipePageProps {
   params: Promise<{
     id: string;
   }>;
 }
 
-// 2. Adicionamos o "async" na função
+
 export default async function ReceitaPage({ params }: RecipePageProps) {
-  // 3. Aguardamos o recebimento do id usando await
+
   const resolvedParams = await params;
   const recipe = recipes.find((recipe) => recipe.id === resolvedParams.id);
 
@@ -61,7 +58,7 @@ export default async function ReceitaPage({ params }: RecipePageProps) {
             </div>
 
             {/* colunas */}
-            <div className="grid grid-cols-2 gap-8"> {/* Adicionei um gap aqui para espaçar as colunas */}
+            <div className="grid grid-cols-2 gap-8"> {}
               {/* coluna dos ingredientes */}
               <div>
                 <h2 className="text-xl font-bold mb-4">Ingredientes</h2>
