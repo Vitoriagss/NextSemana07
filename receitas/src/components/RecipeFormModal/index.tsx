@@ -55,7 +55,13 @@ export default function RecipeFormModal({
   });
 
   const onSubmit = (data: RecipeFormData) => {
-    console.log(data);
+    const recipeData = {
+      ...data,
+      ingredients: data.ingredients.map((ingredient) => ingredient.value),
+      instructions: data.instructions.map((instruction) => instruction.value)
+    }
+
+    console.log(recipeData);
     reset();
     onClose();
   };
@@ -64,7 +70,7 @@ export default function RecipeFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white min-w-2xl">
+      <DialogContent className="bg-white min-w-2xl max-h-[90dvh] overflow-y-scroll">
         <DialogHeader>
           <DialogTitle>Nova receita</DialogTitle>
         </DialogHeader>
