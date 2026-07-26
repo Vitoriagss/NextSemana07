@@ -57,9 +57,12 @@ export default function ReceitasPage() {
       } else {
         // modo "edit"
         const updatedRecipe = recipeData as Recipe;
+
+        const response = await api.put(`/recipes/${updatedRecipe.id}`, updatedRecipe)
+
         setRecipes((prev) =>
           prev.map((recipe) =>
-            recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+            recipe.id === updatedRecipe.id ? response.data : recipe
           )
         );
       }
