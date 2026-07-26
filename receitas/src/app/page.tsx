@@ -1,10 +1,30 @@
+"use client"
+
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { recipes } from "@/src/lib/data";
 import RecipeCard from "@/src/components/RecipeCard";
+import { useEffect, useState } from "react";
+import { Recipe } from "@/src/lib/data";
+import api from "@/src/lib/api";
+import { toast } from "sonner";
 
 export default function Home() {
-  const featuredRecipes = recipes.slice(0, 3);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await api.get("/recipes");
+
+        setRecipes(response.data.slice(0, 3));
+      } catch (error) {
+        console.error("Erro ao requisitar as receitas", error);
+        toast.error("Erro ao requisitar as receitas, tente novamente mais tarde")
+      }
+    };
+
+    fetchRecipes();
+  }, []);
 
   return (
     <main className="flex-grow">
@@ -12,8 +32,8 @@ export default function Home() {
       {/* seção Hero */}
       <section className="bg-orange-50 py-12">
         <div className="flex flex-col gap-6 items-center container mx-auto">
-          <h1 className="text-5xl font-bold text-black">Receitas deliciosas</h1>
-          <p className="text-xl text-gray-800">Descubra receitas simples e saborosas para todas as ocasiões</p>
+          <h1 className="text-5xl font-bold">Receitas deliciosas</h1>
+          <p className="text-xl">Descubra receitas simples e saborosas para todas as ocasiões</p>
 
           <Link className="bg-orange-500 hover:bg-orange-700 transition-colors text-white font-bold rounded-lg px-3 py-2" href="/receitas">
             Ver todas as receitas
@@ -26,8 +46,8 @@ export default function Home() {
         <div className="flex flex-col items-center container mx-auto gap-8">
           <h2 className="text-lg font-bold">Receitas em destaque</h2>
 
-          <div className="flex w-full gap-8">
-            {featuredRecipes.map((recipe) => (
+          <div className="grid grid-cols-3 w-full gap-8">
+            {recipes.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe}/>
             ))}
           </div>
