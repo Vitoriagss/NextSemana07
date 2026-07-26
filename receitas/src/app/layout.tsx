@@ -7,8 +7,8 @@ import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin"]
-})
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Receitas",
@@ -29,7 +29,7 @@ export default function RootLayout({
         {children}
         <Footer />
 
-        <Toaster richColors/>
+        <Toaster richColors />
       </body>
     </html>
   );
