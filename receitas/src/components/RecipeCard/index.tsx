@@ -1,3 +1,5 @@
+'use client';
+
 import { Recipe } from "@/src/lib/data";
 import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
