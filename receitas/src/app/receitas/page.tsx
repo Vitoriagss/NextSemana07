@@ -4,9 +4,10 @@ import DeleteConfirmationModal from "@/src/components/DeleteConfirmationModal";
 import RecipeCard from "@/src/components/RecipeCard";
 import RecipeFormModal from "@/src/components/RecipeFormModal";
 import api from "@/src/lib/api";
-import type { Recipe} from "@/src/lib/data";
+import type { Recipe } from "@/src/lib/data";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function ReceitasPage() {
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
@@ -26,6 +27,7 @@ export default function ReceitasPage() {
         setRecipes(response.data);
       } catch (error) {
         console.error("Erro ao requisitar as receitas", error);
+        toast.error("Erro ao requisitar as receitas, tente novamente mais tarde")
       }
     };
 
@@ -54,6 +56,7 @@ export default function ReceitasPage() {
         const response = await api.post("/recipes", recipeData);
         const newRecipe = response.data;
         setRecipes((prev) => [...prev, newRecipe]);
+        toast.success("Receita criada com sucesso!")
       } else {
         // modo "edit"
         const updatedRecipe = recipeData as Recipe;
@@ -68,13 +71,17 @@ export default function ReceitasPage() {
             recipe.id === updatedRecipe.id ? response.data : recipe
           )
         );
+
+        toast.success("Receita editada com sucesso!")
       }
       handleCloseModal();
+      
     } catch (error) {
       console.error(
         `Erro ao ${modalMode === "create" ? "criar" : "editar"} a receita`,
         error
       );
+      toast.error(`Erro ao ${modalMode === "create" ? "criar" : "editar"} a receita`)
     }
   };
 
@@ -95,8 +102,10 @@ export default function ReceitasPage() {
         setIsDeleteConfirmationModalOpen(false);
         setSelectedRecipe(undefined);
       }
+      toast.success("Receita excluída com sucesso!")
     } catch (error) {
       console.error("Erro ao deletar receita", error)
+      toast.error("Erro ao deletar receita")
     }
   };
 
