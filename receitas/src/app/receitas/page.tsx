@@ -3,6 +3,7 @@
 import DeleteConfirmationModal from "@/src/components/DeleteConfirmationModal";
 import RecipeCard from "@/src/components/RecipeCard";
 import RecipeFormModal from "@/src/components/RecipeFormModal";
+import api from "@/src/lib/api";
 import type { Recipe } from "@/src/lib/data";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -25,7 +26,6 @@ export default function ReceitasPage() {
         setRecipes(response.data);
       } catch (error) {
         console.error("Erro ao requisitar as receitas", error);
-        toast.error("Erro ao requisitar as receitas, tente novamente mais tarde")
       }
     };
 
@@ -48,23 +48,23 @@ export default function ReceitasPage() {
     setIsRecipeModalOpen(false);
   };
 
-  const handleSaveRecipe = (recipeData: Omit<Recipe, "id"> | Recipe) => {
-    if (modalMode === "create") {
-      const newRecipe: Recipe = {
-        ...recipeData,
-        id: (recipes.length + 1).toString(),
-      };
-      setRecipes((prev) => [...prev, newRecipe]);
-    } else {
-      // modo "edit"
-      const updatedRecipe = recipeData as Recipe;
-      setRecipes((prev) =>
-        prev.map((recipe) =>
-          recipe.id === updatedRecipe.id ? updatedRecipe : recipe
-        )
-      );
-    }
-    handleCloseModal();
+  const handleSaveRecipe = async (recipeData: Omit<Recipe, "id"> | Recipe) => {
+    try {
+      if (modalMode === "create") {
+        const response = await api.post("/recipes", recipeData)
+        const newRecipe = response.data;
+        setRecipes((prev) => [...prev, newRecipe])
+      } else {
+        // modo "edit"
+        const updatedRecipe = recipeData as Recipe;
+        setRecipes((prev) =>
+          prev.map((recipe) =>
+            recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+          )
+        );
+      }
+      handleCloseModal();
+    } catch (error) {}
   };
 
   const handleOpenDeleteConfirmationModal = (recipe: Recipe) => {
