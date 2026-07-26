@@ -1,6 +1,6 @@
 import InfoPill from "@/src/components/InfoPill";
 import PreparationStep from "@/src/components/PreparationStep";
-import { recipes } from "@/src/lib/data";
+import api from "@/src/lib/api";
 import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,11 +12,18 @@ interface RecipePageProps {
   }>;
 }
 
-
 export default async function ReceitaPage({ params }: RecipePageProps) {
-
   const resolvedParams = await params;
-  const recipe = recipes.find((recipe) => recipe.id === resolvedParams.id);
+  let recipe = null;
+
+  try {
+    //Busca a receita diretamente da API
+    const response = await api.get(`/recipes/${resolvedParams.id}`);
+    recipe = response.data;
+  } catch (error) {
+    // Se a API retornar 404, cai no notFound() do Next.js
+    return notFound();
+  }
 
   if (!recipe) {
     return notFound();
@@ -36,16 +43,16 @@ export default async function ReceitaPage({ params }: RecipePageProps) {
             <Image
               src={recipe.image}
               fill
-              alt={recipe.title}
+              alt={recipe.title || recipe.name}
               className="object-cover"
             />
           </div>
 
           {/* Descrição da receita */}
           <div className="flex flex-col gap-6 p-6">
-            {/* titulo e descrição */}
+            {/* Título e descrição */}
             <div>
-              <h1 className="text-3xl font-bold">{recipe.title}</h1>
+              <h1 className="text-3xl font-bold">{recipe.title || recipe.name}</h1>
               <p>{recipe.description}</p>
             </div>
 
@@ -57,24 +64,30 @@ export default async function ReceitaPage({ params }: RecipePageProps) {
               <InfoPill title="Categoria" info={recipe.category} />
             </div>
 
-            {/* colunas */}
-            <div className="grid grid-cols-2 gap-8"> {}
-              {/* coluna dos ingredientes */}
+            {/* Colunas */}
+            <div className="grid grid-cols-2 gap-8">
+              {/* Coluna dos ingredientes */}
               <div>
                 <h2 className="text-xl font-bold mb-4">Ingredientes</h2>
                 <ul className="list-disc list-inside space-y-2">
-                  {recipe.ingredients.map((ingredient) => (
-                    <li key={ingredient} className="marker:text-orange-500">{ingredient}</li>
+                  {recipe.ingredients?.map((ingredient: string) => (
+                    <li key={ingredient} className="marker:text-orange-500">
+                      {ingredient}
+                    </li>
                   ))}
                 </ul>
               </div>
 
-              {/* coluna do modo de preparo */}
+              {/* Coluna do modo de preparo */}
               <div>
                 <h2 className="text-xl font-bold mb-4">Modo de Preparo</h2>
                 <ol className="space-y-4">
-                  {recipe.instructions.map((instruction, index) => (
-                    <PreparationStep key={instruction} index={index + 1} description={instruction} />
+                  {recipe.instructions?.map((instruction: string, index: number) => (
+                    <PreparationStep
+                      key={instruction}
+                      index={index + 1}
+                      description={instruction}
+                    />
                   ))}
                 </ol>
               </div>

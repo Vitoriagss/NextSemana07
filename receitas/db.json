@@ -92,31 +92,6 @@
         "Sirva imediatamente."
       ],
       "category": "Entradas"
-    },
-    {
-      "instructions": [
-        "Cozinhe o macarrão em uma panela com água quente e sal a gosto até ficar al dente. Reserve.",
-        "Amasse bem o alho juntamente com o sal, formando uma pasta.",
-        "Em uma frigideira, coloque o alho amassado e o óleo.",
-        "Frite em fogo médio sem deixar o alho queimar, só dourar.",
-        "Acrescente a manteiga e deixe ferver um pouco, só para incorporar bem o sabor, mexendo sempre.",
-        "Acrescente o macarrão cozido previamente e misture para incorporar. Depois é só servir."
-      ],
-      "ingredients": [
-        "500 g de espaguete",
-        " 5 dentes de alho amassados",
-        "5 colheres de sopa de óleo",
-        "1 colher de sopa de manteiga",
-        " Sal a gosto"
-      ],
-      "servings": 10,
-      "cookTime": "10 minutos",
-      "prepTime": "30 minutos",
-      "image": "/receitas/macarrao-alho-e-oleo.png",
-      "description": "Aquela receita simples e prática que todo mundo ama: macarrão ao alho e óleo! A presença do alho douradinho dá um sabor único a esse prato! Veja agora mesmo como fazer essa massa que todo mundo ama!",
-      "category": "Pratos principais",
-      "title": "Macarrão",
-      "id": "hxOfvZn1u50"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
